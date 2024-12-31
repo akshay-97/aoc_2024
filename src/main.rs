@@ -4,10 +4,11 @@ mod day3;
 mod day4;
 mod day5;
 mod day6;
+mod day7;
 
 fn main() -> Result<(), anyhow::Error> {
     let config = Conf::get_conf()?;
-    day6::run(config.path_to_input)?;
+    day7::run(config.path_to_input)?;
     Ok(())
 }
 

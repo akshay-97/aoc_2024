@@ -32,7 +32,7 @@ impl Lne{
     fn recurse(&self, curr : Option<u64>, index : usize) -> bool{
         //println!("{} {:?}" , self.target, curr);
         
-        if curr.is_some() && curr.unwrap() == self.target{ 
+        if curr.is_some() && curr.unwrap() == self.target && index == self.input.len(){ 
             return true
         }
 
@@ -58,6 +58,12 @@ impl Lne{
             return true
         }
 
+        //try concat
+        let concat = self.recurse(Some(concat_dig(curr.unwrap_or(0), self.input[index])), index+1);
+        if concat{
+            return true
+        }
+
         return false
     }
 }
@@ -72,6 +78,14 @@ fn process(mut buffer : impl Iterator<Item = Result<String, std::io::Error>>) ->
     res
 }
 
+fn concat_dig(mut a : u64, b : u64) -> u64{
+    let mut copy_b = b;
+    while copy_b > 0{
+        a *= 10;
+        copy_b /= 10;
+    }
+    a + b
+}
 #[cfg(test)]
 mod tests{
     use super::*;
@@ -87,5 +101,26 @@ mod tests{
         let input = "190: 10 19";
         let lne = Lne::new(input.to_string()).unwrap();
         assert_eq!(lne.recurse(None, 0), true);
+    }
+
+    #[test]
+    fn test3(){
+        let input = "156: 1 5 6";
+        let lne = Lne::new(input.to_string()).unwrap();
+        assert_eq!(lne.recurse(None, 0), true);
+    }
+
+    #[test]
+    fn test4(){
+        let input = "7290: 6 8 6 15 6";
+        let lne = Lne::new(input.to_string()).unwrap();
+        assert_eq!(lne.recurse(None, 0), false);
+    }
+
+    #[test]
+    fn test5(){
+        let input = "156: 10 1";
+        let lne = Lne::new(input.to_string()).unwrap();
+        assert_eq!(lne.recurse(None, 0), false);
     }
 }
